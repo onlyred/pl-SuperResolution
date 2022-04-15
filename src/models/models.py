@@ -21,7 +21,7 @@ class SR_Model(pl.LightningModule):
         self.batch_size   = opt.batch_size
         self.n_worker     = opt.n_worker
         self.model        = opt.model
-        self.in_channel   = opt.in_channel
+        self.in_channels  = opt.in_channels
         self.patch_size   = opt.patch_size
         self.upsample     = opt.upsample
 
@@ -105,7 +105,7 @@ class SR_Model(pl.LightningModule):
         parser = argparse.ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument('--dataroot', type=str, required=True)
         parser.add_argument('--loss', choices=['psnr'], help='select losses', required=True)
-        parser.add_argument('--in_channel', type=int, help='number of input channel', default=3)
+        parser.add_argument('--in_channels', type=int, help='number of input channel', default=3)
         parser.add_argument('--h_dims', type=int, help='hidden dimmensions', default=64)
         parser.add_argument('--upsample', default=False, help='pre-upsample', action='store_true')
         parser.add_argument('--patch_size', type=int, default=96, help='patch size for cropping')
@@ -123,7 +123,7 @@ class SRCNN_Model(SR_Model):
         
     def _define_model(self):
         if self.model == 'srcnn':
-            self.net = models.SRCNN(self.in_channel, self.h_dims)
+            self.net = models.SRCNN(self.in_channels, self.h_dims)
         else:
             raise NotImplementedError
 
@@ -138,7 +138,7 @@ class FSRCNN_Model(SR_Model):
 
     def _define_model(self):
         if self.model == 'fsrcnn':
-            self.net = models.FSRCNN(self.scale_factor, self.in_channel, 
+            self.net = models.FSRCNN(self.scale_factor, self.in_channels, 
                                      self.h_dims, self.s_dims, self.n_map )
         else:
             raise NotImplementedError
@@ -148,7 +148,7 @@ class FSRCNN_Model(SR_Model):
         parser = argparse.ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument('--dataroot', type=str, required=True)
         parser.add_argument('--loss', choices=['psnr'], help='select losses', required=True)
-        parser.add_argument('--in_channel', type=int, help='number of input channel', default=3)
+        parser.add_argument('--in_channels', type=int, help='number of input channel', default=3)
         parser.add_argument('--h_dims', type=int, help='hidden dimmensions', default=64)
         parser.add_argument('--upsample', default=False, help='pre-upsample', action='store_true')
         parser.add_argument('--patch_size', type=int, default=96, help='patch size for cropping')
@@ -159,3 +159,34 @@ class FSRCNN_Model(SR_Model):
         parser.add_argument('--n_map', type=int, help='number of map layers', default=4)
         return parser
 
+class EDSR_Model(SR_Model):
+    def __init__(self, opt):
+        super(EDSR_Model,self).__init__(opt)
+        self.n_blocks = opt.n_blocks
+        self.h_dims   = opt.h_dims
+        self.res_scale= opt.res_scale
+
+        self._define_model()
+
+    def _define_model(self):
+        if self.model == 'edsr':
+            self.net = models.EDSR(self.scale_factor, self.in_channels, 
+                                     self.h_dims, self.n_blocks, self.res_scale )
+        else:
+            raise NotImplementedError
+     
+    @staticmethod
+    def add_model_specific_args(parent_parser):
+        parser = argparse.ArgumentParser(parents=[parent_parser], add_help=False)
+        parser.add_argument('--dataroot', type=str, required=True)
+        parser.add_argument('--loss', choices=['psnr'], help='select losses', required=True)
+        parser.add_argument('--in_channels', type=int, help='number of input channel', default=3)
+        parser.add_argument('--h_dims', type=int, help='hidden dimmensions', default=64)
+        parser.add_argument('--upsample', default=False, help='pre-upsample', action='store_true')
+        parser.add_argument('--patch_size', type=int, default=96, help='patch size for cropping')
+        parser.add_argument('--n_worker', type=int, help='num_workers in dataloader', default=8)
+        parser.add_argument('--scale_factor', type=int, default=2, help='scale factor')
+        parser.add_argument('--batch_size', type=int, default=16, help='batch_size')
+        parser.add_argument('--n_blocks', type=int, help='number of resblocks', default=16)
+        parser.add_argument('--res_scale', type=float, help='scale of resblocks', default=1.0)
+        return parser

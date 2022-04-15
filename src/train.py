@@ -12,7 +12,8 @@ import models
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', choices=['srcnn','fsrcnn'], help='select model', required=True)
+    parser.add_argument('--model', choices=['srcnn','fsrcnn','edsr'], 
+                         help='select model', required=True)
     parser.add_argument('--gpus', type=str, default='0',help='number of gpu')
     parser.add_argument('--seed', type=int, default=0, help='seed number')
     parser.add_argument('--logdir', type=str, default='./logs', help='log directory')
@@ -28,6 +29,8 @@ def main():
         Model = models.SRCNN_Model
     elif opt.model == 'fsrcnn':
         Model = models.FSRCNN_Model
+    elif opt.model == 'edsr':
+        Model = models.EDSR_Model
     else:
         raise NotImplementedError
     # add model specific arguments to original parser

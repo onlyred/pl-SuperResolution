@@ -13,7 +13,7 @@ import models
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', choices=['srcnn','fsrcnn'],required=True)
+    parser.add_argument('--model', choices=['srcnn','fsrcnn','edsr'],required=True)
     parser.add_argument('--ckpt', type=str,required=True)
     opt = parser.parse_args()
     return opt
@@ -26,6 +26,8 @@ def main():
         Model = models.SRCNN_Model
     elif opt.model == 'fsrcnn':
         Model = models.FSRCNN_Model
+    elif opt.model == 'edsr':
+        Model = models.EDSR_Model
     else:
         raise NotImplementedError
 

@@ -6,7 +6,8 @@ import traceback
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from pytorch_lightning.loggers import WandbLogger
+#from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.loggers import TensorBoardLogger
 
 from models import get_model
 
@@ -29,13 +30,14 @@ def main():
     # add model specific arguments to original parser
     parser = Model.add_model_specific_args(parser)
     opt    = parser.parse_args()
-    # WandB Logger
-    wandb_logger = WandbLogger(
-                        project='sr',
-                        offline = True,
-    )
-    wandb_logger.log_hyperparams(dict(opt.__dict__))
-    logpath = Path("%s/%s/%s" %(opt.logdir, opt.model, wandb_logger.version))
+    ## Logger
+    #logger = WandbLogger(
+    #                    project='sr',
+    #                    offline = True,
+    #)
+    logger = TensorBoardLogger("logs", name=opt.model)
+    logger.log_hyperparams(dict(opt.__dict__))
+    logpath = Path("%s/%s/%s" %(opt.logdir, opt.model, logger.version))
     logpath.mkdir(parents=True, exist_ok=True)
  
     model = Model(opt)
@@ -56,11 +58,9 @@ def main():
     # define trainer
     trainer = pl.Trainer(
         callbacks=[ealry_stop_callback, checkpoint_callback],
-        logger= wandb_logger,
+        logger= logger,
         gpus= [int(i) for i in opt.gpus.split(',')],
         max_epochs=opt.epochs,
-        #log_every_n_steps=10,
-        #check_val_every_n_epoch=10,
     )
     # start training
     ierror=False

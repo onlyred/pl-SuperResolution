@@ -1,5 +1,8 @@
+from collections import namedtuple
+
 import torch
 import torch.nn as nn
+import torchvision.models.vgg as vggs
 
 import cv2
 import numpy as np
@@ -7,45 +10,23 @@ import numpy as np
 """
 reference by https://github.com/bonlime/pytorch-tools
 """
+class VGG19FeatureExtractor(nn.Module):
+    def __init__(self, image_channels: int = 3) -> None:
+        super().__init__()
 
-class GANLoss(nn.Module):
-    """
-    Pytorch module for GAN Loss
-    from https://github.com/S-aiueo32/sr-pytorch-lightning/blob/master/models/losses.py
-    """
-    def __init__(self, gan_mode='wgangp', target_real_label=1.0, target_fake_label=0.0):
-        super(GANLoss, self).__init__()
-        # not updated by optimizer
-        self.register_buffer('real_label', torch.tensor(target_real_label))
-        self.register_buffer('fake_label', torch.tensor(target_fake_label))
+        assert image_channels in [1, 3]
+        self.image_channels = image_channels
 
-        self.gan_mode = gan_mode
-        if gan_mode == 'mse':
-            self.loss = nn.MSELoss()
-        elif gan_mode == 'bce':
-            self.loss = nn.BCEWithLogitsLoss()
-        elif gan_mode in ['wgangp']:
-            self.loss = None
-        else:
-            raise NotImplementedError('gan mode %s not implemented' %(gan_mode))
+        vgg = vggs.vgg19(pretrained=True)
+        self.vgg = nn.Sequential(*list(vgg.features)[:-1]).eval()
+        for p in self.vgg.parameters():
+            p.requires_grad = False
 
-    def get_target_tensor(self, prediction, target_is_real):
-        if target_is_real:
-            target_tensor = self.real_label
-        else:
-            target_tensor = self.fake_label
-        return target_tensor.expand_as(prediction).detach()
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.image_channels == 1:
+            x = x.repeat(1, 3, 1, 1)
 
-    def forward(self, prediction, target_is_real):
-        if self.gan_mode in ['lsgan', 'vanilla']:
-            target_tensor = self.get_target_tensor(prediction, target_is_real)
-            loss = self.loss(prediction, target_tensor)
-        elif self.gan_mode == 'wgangp':
-            if target_is_real:
-                loss =  -1 * prediction.mean() 
-            else:
-                loss = prediction.mean()
-        return loss
+        return self.vgg(x)
 
 class PSNR(nn.Module):
     """

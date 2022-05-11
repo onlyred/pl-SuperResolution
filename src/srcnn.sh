@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### SRCNN
-dataroot="${HOME}/onlyred/deepSR/dataset/Flickr1024"
+dataroot="../dataset/Flickr1024"
 logdir="./logs"
 model='srcnn'
 scale_factor=4
@@ -23,5 +23,5 @@ python train.py --model ${model} \
                 --epochs ${epochs} \
                 --in_channel ${in_channel} \
                 --h_dims ${h_dims} \
-                --logdir ${logdir}
+                --logdir ${logdir} \
                 --upsample

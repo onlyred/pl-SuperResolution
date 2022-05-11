@@ -1,11 +1,11 @@
 #!/bin/sh
 
 ### EDSR
-dataroot="${HOME}/onlyred/deepSR/dataset/Flickr1024"
+dataroot="../dataset/Flickr1024"
 logdir="./logs"
 scale_factor=4
 bs=16
-gpus=1
+gpus=0
 seed=0
 loss='psnr'
 patch_size=250

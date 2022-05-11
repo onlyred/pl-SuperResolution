@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### SRCNN
-dataroot="${HOME}/onlyred/deepSR/dataset/Flickr1024"
+dataroot="../dataset/Flickr1024"
 logdir="./logs"
 model='srgan'
 scale_factor=4

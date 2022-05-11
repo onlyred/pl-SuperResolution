@@ -9,11 +9,11 @@ from torchvision.utils import save_image
 from kornia.losses import PSNRLoss, SSIMLoss
 from kornia.color import rgb_to_grayscale
 
-import models
+from models import get_model
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', choices=['srcnn','fsrcnn','edsr'],required=True)
+    parser.add_argument('--model', choices=['srcnn','fsrcnn','edsr','srgan'],required=True)
     parser.add_argument('--ckpt', type=str,required=True)
     opt = parser.parse_args()
     return opt
@@ -22,14 +22,7 @@ def main():
     opt = get_arguments()
 
     # load model classes
-    if opt.model == 'srcnn':
-        Model = models.SRCNN_Model
-    elif opt.model == 'fsrcnn':
-        Model = models.FSRCNN_Model
-    elif opt.model == 'edsr':
-        Model = models.EDSR_Model
-    else:
-        raise NotImplementedError
+    Model = get_model(opt.model)
 
     if torch.cuda.is_available():
         device='cuda'
@@ -76,7 +69,7 @@ def main():
         
     psnr_mean /= len(dataloader)
     ssim_mean /= len(dataloader)
-    print(f'PSNR: {psnr_mean:.4}, SSIM : {ssim_mean:.4}')
+    print(f'PSNR: {-1 * psnr_mean:.4}, SSIM : {ssim_mean:.4}')
     df = pd.DataFrame(csv).round(3)
     df.to_csv(save_dir / 'stat.csv', index=False)
 

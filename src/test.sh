@@ -1,10 +1,8 @@
 #!/bin/sh
 
-model='edsr'
+model='srgan'
 
-#ckpt_path="./logs/${model}/1qexsu5k"
-#ckpt_path="./logs/${model}/795xgiwe"
-ckpt_path="./logs/${model}/1pu5q60r"
+ckpt_path="./logs/${model}/2hnq243w"
 ckpt=`ls ${ckpt_path}/*.ckpt`
 
 

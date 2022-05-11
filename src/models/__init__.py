@@ -1,13 +1,10 @@
-from .models import SRCNN_Model, FSRCNN_Model, EDSR_Model
-from .networks import SRCNN, FSRCNN, EDSR
+from .utils import get_model
+from .networks import Generator, Discriminator
 
 __all__ = [
-	'losses',
-        'SRCNN_Model',
-        'FSRCNN_Model',
-        'EDSR_Model',
-        'SRCNN',
-        'FSRCNN',
-        'EDSR'
+	'utils',
+	'get_model',
+        'networks'
+        'Generator',
+        'Discriminator',
 ]
-

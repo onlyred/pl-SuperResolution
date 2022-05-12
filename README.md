@@ -4,11 +4,12 @@ Practice for Super-Resolution
 (Baseline Code: https://github.com/S-aiueo32/sr-pytorch-lightning)
 
 ## Requirements
-- Torch == 1.8.1
-- Torchvision == 0.9.1 
-- pytorch-lightning == 1.3.8
+- Torch >= 1.8.1
+- Torchvision >= 0.9.1 
+- pytorch-lightning >= 1.3.8
 - kornia (https://kornia.readthedocs.io/en/latest/index.html)
-- wandb 
+- opencv
+- pandas
 - ...
 
 ## Dataset
@@ -21,5 +22,3 @@ lickr1024 is a large-scale stereo image dataset which consists of 1024 high-qual
 - Train : 1600
 - Validation : 224
 - Test : 224
-~
-

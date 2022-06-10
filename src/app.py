@@ -22,7 +22,7 @@ def main():
         # define saved model
         saved_model = "./sample_saved/%s/%s.ckpt" %(choice, choice)
         # input image
-        image = st.file_uploader('Upload your portrait here',type=['jpg','jpeg','png'])
+        image = st.file_uploader('Upload your portrait here',type=['jpg','jpeg','png'],key=main_choice) # key for refreshing
 
         if image is not None:
             # set two columns
@@ -38,7 +38,7 @@ def main():
                 # show sr_image
                 st.image(image_, caption=choice, width=image_width)
     elif main_choice == "Compare":
-        image = st.file_uploader('Upload your portrait here',type=['jpg','jpeg','png'])
+        image = st.file_uploader('Upload your portrait here',type=['jpg','jpeg','png'],key=main_choice) # key for refreshing
         if image is not None:
             image_ = image.read()
             # set columns
@@ -69,4 +69,5 @@ def main_option_menu():
     return selected
 
 if __name__ == "__main__":
+    st.set_page_config(layout="wide") # set wide mode as default 
     main()

@@ -7,7 +7,7 @@ def main():
     # main menu
     main_choice = main_option_menu()
     # for side-menu
-    models_list = ['fsrcnn', 'edsr']
+    models_list = ['fsrcnn', 'edsr', 'srgan']
     image_width = 500
 
     if main_choice == "Home":
